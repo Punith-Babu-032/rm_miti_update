@@ -1,0 +1,63 @@
+<mvc:View
+    controllerName="mitiupdate.controller.Worklist"
+    xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:l="sap.ui.layout"
+    xmlns:f="sap.ui.layout.form"
+    xmlns:semantic="sap.f.semantic">
+
+   <Page id="_IDGenPage1" title="Create a Plan" showNavButton="true">
+        <content>
+            <Wizard currentStep="mitigations" id="mitagationUpd" class="sapUiResponsivePadding--header sapUiResponsivePadding--content" showNextButton="false">
+                <WizardStep id="proposeRiskBasicData" title="General Details">
+                    <f:SimpleForm id="SimpleFormChange354" editable="true" layout="ResponsiveGridLayout" labelSpanXL="3" labelSpanL="3" labelSpanM="3" labelSpanS="12" adjustLabelSpan="false" emptySpanXL="4" emptySpanL="4" emptySpanM="4" emptySpanS="0" columnsXL="1" columnsL="1" columnsM="1" singleContainerFullSize="false">
+                        <f:content>
+                            <Label id="_IDGenLabel1" text="Plan Name" design="Bold"/>
+                            <Input id="name" placeholder="Enter the Title" editable="{= ${appConfigModel>/app} === 'RequestApp'}"/>
+                            <Label id="_IDGenLabel2" text="Activity" design="Bold" />
+                            <Select forceSelection="false" id="_IDGenSelect1" editable="{= ${appConfigModel>/app} === 'RequestApp'}" >
+                                <core:Item id="_IDGenItem1" key="A1" text="Perform Mitigation Update" />
+                            </Select>
+                            <Label id="_IDGenLabel6" text="Organization" design="Bold" />
+                            <Select forceSelection="false" id="_IDGenSelect2" editable="{= ${appConfigModel>/app} === 'RequestApp'}" >
+                                <core:Item id="_IDGenItem3" key="A1" text="Organization1" />
+                                <core:Item id="_IDGenItem4" key="A1" text="Organization2" />
+                            </Select>
+                            <Label id="_IDGenLabel8"  text="Mitigation Owner" design="Bold"/>
+                            <DatePicker id="_IDGenDatePicker2" placeholder="Enter End Date"/>
+                            <Label id="_IDGenLabel3" text="Start Date" design="Bold"/>
+                            <DatePicker id="DP1" placeholder="Enter Start Date"/>
+                            <Label id="_IDGenLabel4" text="End Date" design="Bold"/>
+                            <DatePicker id="DP2" placeholder="Enter End Date"/>
+                        </f:content>
+                    </f:SimpleForm>
+                </WizardStep>
+                 <WizardStep id="mitigations" validated="true"  title="Mitigations">
+                    <List id="_IDGenList1" items="{dropdowns>/mitigations}" mode="Delete" delete="handleMitiDelete">
+                        <headerToolbar>
+                            <OverflowToolbar id="_IDGenOverflowToolbar5">
+                                <ToolbarSpacer id="_IDGenToolbarSpacer4" />
+                                <Button id="_IDGenButton1" icon="sap-icon://add" press="handleAddMitigations" />
+                            </OverflowToolbar>
+                        </headerToolbar>
+                        <items>
+                            <StandardListItem id="_IDGenStandardListItem1" title="{dropdowns>mitiText}"/>
+                        </items>
+                    </List>
+                </WizardStep>
+            </Wizard>
+        </content>
+        <footer>
+            <OverflowToolbar id="_IDGenOverflowToolbar4">
+                <!-- <Button id="prevPageAction" text="Prev" type="Emphasized" press="goToPrevPage" /> -->
+                <ToolbarSpacer id="_IDGenToolbarSpacer3"/>
+                <!-- <Button id="nextPageAction" text="Next" type="Emphasized" press="goToNextPage" /> -->
+                <Button id="submitPageAction" visible="{= ${appConfigModel>/app} === 'RequestApp'}" text="Submit" type="Accept" press="handleSubmitMitiSubmit" />
+                <Button id="approvePageAction" visible="{= ${appConfigModel>/app} === 'ApproveApp'}" text="Approve" type="Accept" press="handleApproveRiskProposal" />
+                <Button id="rejectPageAction" visible="{= ${appConfigModel>/app} === 'ApproveApp'}" text="Reject" type="Reject" press="handleRejectRiskProposal" />
+            </OverflowToolbar>
+        </footer>
+    </Page>
+
+</mvc:View>
