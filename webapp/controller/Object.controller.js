@@ -1,4 +1,4 @@
-sap.ui.define([
+handleMitiDeletesap.ui.define([
     "./BaseController",
     "sap/ui/model/json/JSONModel",
     "sap/ui/core/routing/History",

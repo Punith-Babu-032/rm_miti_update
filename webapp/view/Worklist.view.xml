@@ -9,9 +9,9 @@
 
    <Page id="_IDGenPage1" title="Create a Plan" showNavButton="true">
         <content>
-            <Wizard currentStep="mitigations" id="mitagationUpd" class="sapUiResponsivePadding--header sapUiResponsivePadding--content" showNextButton="false">
-                <WizardStep id="proposeRiskBasicData" title="General Details">
-                    <f:SimpleForm id="SimpleFormChange354" editable="true" layout="ResponsiveGridLayout" labelSpanXL="3" labelSpanL="3" labelSpanM="3" labelSpanS="12" adjustLabelSpan="false" emptySpanXL="4" emptySpanL="4" emptySpanM="4" emptySpanS="0" columnsXL="1" columnsL="1" columnsM="1" singleContainerFullSize="false">
+            <Wizard currentStep="recipients" id="mitagationUpd" class="sapUiResponsivePadding--header sapUiResponsivePadding--content" showNextButton="false">
+                <WizardStep id="proposeRiskBasicData" title="Create a Mitigation Plan">
+                    <f:SimpleForm editable="true" layout="ResponsiveGridLayout" labelSpanXL="3" labelSpanL="3" labelSpanM="3" labelSpanS="12" adjustLabelSpan="false" emptySpanXL="4" emptySpanL="4" emptySpanM="4" emptySpanS="0" columnsXL="1" columnsL="1" columnsM="1" singleContainerFullSize="false">
                         <f:content>
                             <Label id="_IDGenLabel1" text="Plan Name" design="Bold"/>
                             <Input id="name" placeholder="Enter the Title" editable="{= ${appConfigModel>/app} === 'RequestApp'}"/>
@@ -33,8 +33,8 @@
                         </f:content>
                     </f:SimpleForm>
                 </WizardStep>
-                 <WizardStep id="mitigations" validated="true"  title="Mitigations">
-                    <List id="_IDGenList1" items="{dropdowns>/mitigations}" mode="Delete" delete="handleMitiDelete">
+                 <WizardStep id="mitigations" validated="true"  title="Add Mitigations">
+                    <List id="_IDGenList1" items="{saveModel>/mitigations}" mode="Delete" delete="handleMitiDelete">
                         <headerToolbar>
                             <OverflowToolbar id="_IDGenOverflowToolbar5">
                                 <ToolbarSpacer id="_IDGenToolbarSpacer4" />
@@ -42,7 +42,21 @@
                             </OverflowToolbar>
                         </headerToolbar>
                         <items>
-                            <StandardListItem id="_IDGenStandardListItem1" title="{dropdowns>mitiText}"/>
+                            <StandardListItem id="_IDGenStandardListItem1" title="{saveModel>mitiText}"/>
+                        </items>
+                    </List>
+                </WizardStep>
+
+                <WizardStep id="recipients" validated="true"  title="Add Recipients">
+                    <List items="{saveModel>/recipients}" mode="Delete" delete="handleRecipientsDelete">
+                        <headerToolbar>
+                            <OverflowToolbar>
+                                <ToolbarSpacer  />
+                                <Button icon="sap-icon://add" press="handleAddRecipients" />
+                            </OverflowToolbar>
+                        </headerToolbar>
+                        <items>
+                            <StandardListItem title="{saveModel>recText}"/>
                         </items>
                     </List>
                 </WizardStep>
@@ -50,14 +64,9 @@
         </content>
         <footer>
             <OverflowToolbar id="_IDGenOverflowToolbar4">
-                <!-- <Button id="prevPageAction" text="Prev" type="Emphasized" press="goToPrevPage" /> -->
                 <ToolbarSpacer id="_IDGenToolbarSpacer3"/>
-                <!-- <Button id="nextPageAction" text="Next" type="Emphasized" press="goToNextPage" /> -->
-                <Button id="submitPageAction" visible="{= ${appConfigModel>/app} === 'RequestApp'}" text="Submit" type="Accept" press="handleSubmitMitiSubmit" />
-                <Button id="approvePageAction" visible="{= ${appConfigModel>/app} === 'ApproveApp'}" text="Approve" type="Accept" press="handleApproveRiskProposal" />
-                <Button id="rejectPageAction" visible="{= ${appConfigModel>/app} === 'ApproveApp'}" text="Reject" type="Reject" press="handleRejectRiskProposal" />
+                <Button id="submitPageAction" text="Submit" type="Accept" press="handleSubmitMitiSubmit" />
             </OverflowToolbar>
         </footer>
     </Page>
-
 </mvc:View>

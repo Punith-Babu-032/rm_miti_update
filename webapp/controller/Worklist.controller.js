@@ -32,7 +32,13 @@ sap.ui.define([
                 shareSendEmailMessage: this.getResourceBundle().getText("shareSendEmailWorklistMessage", [location.href]),
                 tableNoDataText : this.getResourceBundle().getText("tableNoDataText")
             });
+
             this.setModel(oViewModel, "worklistView");
+
+            this.setModel(new JSONModel({
+                mitigations: [],
+                recipients: []
+            }), "saveModel");
 
             this.setModel(new JSONModel({
                 mitigations: [{
@@ -41,24 +47,22 @@ sap.ui.define([
                 }, {
                     mitiID: "2",
                     mitiText: "Mitigation 2"
-                }]
-            }), "dropdowns");
+                }],
+                recipients: [{
+                    recID: "1",
+                    recText: "Recipient 1"
+                }, {
+                    recID: "2",
+                    recText: "Recipient 2"
+                }],
 
+            }), "dropdowns");
         },
 
         /* =========================================================== */
         /* event handlers                                              */
         /* =========================================================== */
 
-        /**
-         * Triggered by the table's 'updateFinished' event: after new table
-         * data is available, this handler method updates the table counter.
-         * This should only happen if the update was successful, which is
-         * why this handler is attached to 'updateFinished' and not to the
-         * table's list binding's 'dataReceived' method.
-         * @param {sap.ui.base.Event} oEvent the update finished event
-         * @public
-         */
         onUpdateFinished : function (oEvent) {
             // update the worklist's object counter after the table update
             var sTitle,
@@ -78,21 +82,11 @@ sap.ui.define([
             sap.m.MessageBox.success("Your Mitigation Update Plan has been submitted successfully");
         },
 
-        /**
-         * Event handler when a table item gets pressed
-         * @param {sap.ui.base.Event} oEvent the table selectionChange event
-         * @public
-         */
         onPress : function (oEvent) {
             // The source is the list item that got pressed
             this._showObject(oEvent.getSource());
         },
 
-        /**
-         * Event handler for navigating back.
-         * Navigate back in the browser history
-         * @public
-         */
         onNavBack : function() {
             // eslint-disable-next-line sap-no-history-manipulation
             history.go(-1);
@@ -118,11 +112,6 @@ sap.ui.define([
 
         },
 
-        /**
-         * Event handler for refresh event. Keeps filter, sort
-         * and group settings and refreshes the list binding.
-         * @public
-         */
         onRefresh : function () {
             var oTable = this.byId("table");
             oTable.getBinding("items").refresh();
@@ -132,22 +121,80 @@ sap.ui.define([
         /* internal methods                                            */
         /* =========================================================== */
 
-        /**
-         * Shows the selected item on the object page
-         * @param {sap.m.ObjectListItem} oItem selected Item
-         * @private
-         */
+        handleAddMitigations: function () {
+            // open popup
+            if (!this.mitigationPopup) {
+                this.mitigationPopup = new sap.m.SelectDialog({
+                    title: "Select a Mitigation",
+                    confirm: function (oEvent) {
+                        var aContexts = oEvent.getParameter("selectedContexts");
+                        var mObject = aContexts[0].getObject();
+                        var oModel = this.getView().getModel("saveModel");
+                        var aData = oModel.getData();
+                        aData.mitigations.push({ "mitiText": mObject.mitiText });
+                        oModel.setData(aData);
+                        oModel.refresh();
+                    }.bind(this)
+                });
+                this.mitigationPopup.bindAggregation("items", {
+                    path: "dropdowns>/mitigations",
+                    template: new sap.m.StandardListItem({
+                        title: "{dropdowns>mitiText}"
+                    })
+                });
+                this.getView().addDependent(this.mitigationPopup);
+            }
+            this.mitigationPopup.open();
+        },
+
+        handleMitiDelete: function (oEvent) {
+            var id = oEvent.getParameter("listItem").getBindingContext("saveModel").getPath().split("/");
+            var oModel = this.getView().getModel("saveModel");
+            var aData = oModel.getData();
+            aData.mitigations.splice(id,1);
+            oModel.setData(aData);
+        },
+
+        handleAddRecipients: function () {
+            // open popup
+            if (!this.recipientsPopup) {
+                this.recipientsPopup = new sap.m.SelectDialog({
+                    title: "Select a Recipient",
+                    confirm: function (oEvent) {
+                        var aContexts = oEvent.getParameter("selectedContexts");
+                        var mObject = aContexts[0].getObject();
+                        var oModel = this.getView().getModel("saveModel");
+                        var aData = oModel.getData();
+                        aData.recipients.push({ "recText": mObject.recText });
+                        oModel.setData(aData);
+                        oModel.refresh();
+                    }.bind(this)
+                });
+                this.recipientsPopup.bindAggregation("items", {
+                    path: "dropdowns>/recipients",
+                    template: new sap.m.StandardListItem({
+                        title: "{dropdowns>recText}"
+                    })
+                });
+                this.getView().addDependent(this.recipientsPopup);
+            }
+            this.recipientsPopup.open();
+        },
+
+        handleRecipientsDelete: function (oEvent) {
+            var id = oEvent.getParameter("listItem").getBindingContext("saveModel").getPath().split("/");
+            var oModel = this.getView().getModel("saveModel");
+            var aData = oModel.getData();
+            aData.recipients.splice(id,1);
+            oModel.setData(aData);
+        },
+
         _showObject : function (oItem) {
             this.getRouter().navTo("object", {
                 objectId: oItem.getBindingContext().getPath().substring("/Orders".length)
             });
         },
 
-        /**
-         * Internal helper method to apply both filter and search state together on the list binding
-         * @param {sap.ui.model.Filter[]} aTableSearchState An array of filters for the search
-         * @private
-         */
         _applySearch: function(aTableSearchState) {
             var oTable = this.byId("table"),
                 oViewModel = this.getModel("worklistView");
