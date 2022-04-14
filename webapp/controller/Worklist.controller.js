@@ -187,22 +187,6 @@ sap.ui.define([
             var aData = oModel.getData();
             aData.recipients.splice(id,1);
             oModel.setData(aData);
-        },
-
-        _showObject : function (oItem) {
-            this.getRouter().navTo("object", {
-                objectId: oItem.getBindingContext().getPath().substring("/Orders".length)
-            });
-        },
-
-        _applySearch: function(aTableSearchState) {
-            var oTable = this.byId("table"),
-                oViewModel = this.getModel("worklistView");
-            oTable.getBinding("items").filter(aTableSearchState, "Application");
-            // changes the noDataText of the list in case there are no filter results
-            if (aTableSearchState.length !== 0) {
-                oViewModel.setProperty("/tableNoDataText", this.getResourceBundle().getText("worklistNoDataWithSearchText"));
-            }
         }
 
     });
